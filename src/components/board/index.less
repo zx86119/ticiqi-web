@@ -1,0 +1,105 @@
+
+.board{
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 90vw;
+  height: auto;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 1px 1px 5px #B1B3B9;
+  .header{
+    padding: 5px 20px 5px 20px;
+    position: relative;
+    display: flex;
+    display: flex;
+    align-items: center;
+    width: 90%;
+    height: 40px;
+    background-color: #F3F7FF;
+    .label{
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end; 
+      img{
+        width: 26px;
+        height: 26px;
+      }
+    }
+    .tag{
+      position: absolute;
+      background-color: #7C99D6;
+      color: white;
+      width: 150px;
+      height: 40px;
+      border-radius: 30px;
+      font-size: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      
+    }.show{
+      top:25px
+    }
+  }
+  .main{
+    width: 90%;
+    margin-top:20px;
+    padding: 5px 20px 5px 20px;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    
+    .wrap{
+      display: flex;
+      flex-direction: column;
+      .name{
+        font-size: 20px;
+        font-weight: bold;
+        padding: 5px;
+      }
+      .total{
+        border-top: 1px solid gray;
+        padding-top: 10px;
+        padding-bottom: 20px;
+        font-size: 18px;
+        display: flex;
+        flex-direction: column;
+        font-size:150%;
+        font-weight:bold;
+        .num{
+          color:#5756D7;
+          
+          margin-top:10px;
+        }
+      }
+      .line{
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        .item{
+          font-size: 18px;
+          padding: 10px 10px 10px 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          .num{
+            font-size: 150%;
+            font-weight: bold;
+          }
+          .desc{
+            max-width: 40vw;
+            margin-top: 10px;
+            text-align: center;
+            color:#B3B3B7;
+            font-size:70%;
+          }
+        }
+      }
+    }
+  }
+}
