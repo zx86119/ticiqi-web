@@ -104,7 +104,7 @@ export default {
         fontSize: '40px',
 				color:'#ffffff',
         transform: 'rotateY(0deg)',
-        padding:'100vh 0',
+        padding:'50vh 0 100vh 0',
         'white-space':'pre-wrap',
         'line-height': 1,
       },
@@ -136,12 +136,10 @@ export default {
           this.pObj['white-space'] = 'pre'
           //  !!!因为样式采用了 box-sizing: border-box;所以要设置300vw才会有留白
           // this.pObj.width = '300vw'
-
         }else{
           //console.log('向上播放')
           this.pObj.padding = '100vh 0'
           this.pObj['white-space'] = 'pre-wrap'
-          // this.pObj.width = 'auto'
         }
       }
     },
@@ -166,7 +164,10 @@ export default {
     },
   },
   computed: {},
-  mounted() {},
+  mounted() {
+  },
+  updated(){
+  },
   methods: {
     _fetchData() {
       var that=this
@@ -249,11 +250,13 @@ export default {
       this.show = !this.show
       //改变播放状态
       this.playState = !this.playState
-      //调用播放
-      this.play()
-      // console.log('scrollTop'+this.$refs.tici.scrollTop)
-      // console.log('scrollHeight'+this.$refs.tici.scrollHeight)
-      // console.log('innerHeight'+window.innerHeight)
+      //判断倒计时
+      if(this.countNum === 0){
+        //调用播放
+        this.play()
+      }else{
+        setTimeout(this.play,this.countNum*1000)
+      }
     },
     //打开(关闭)设置框
     set(){
