@@ -3,7 +3,7 @@
       <keep-alive>
       <router-view></router-view>
     </keep-alive>
-    <tarbar/>
+    <!-- <tarbar/> -->
   </div>
 </template>
 
@@ -13,7 +13,7 @@ import tarbar from '@/components/tarbar/tarbar.vue'
 export default {
   name: 'App',
   components: {
-    tarbar
+    // tarbar
   },
   data() {
     return {

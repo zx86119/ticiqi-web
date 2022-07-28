@@ -1,52 +1,68 @@
 <template>
-  
   <div class="home_c">
     <div>
-      <span>题词页面</span>
-    </div>
-    <textarea :style="textareaObj" v-model.lazy="text"></textarea>
-    <div>
-      <button @click="startPlay()">开始</button>
-      <router-link to="/config">开始2</router-link>
-    </div>
-
-
-
-
-    <div :style="divObj" ref="tici" v-show="show">
-      <div class="dingwei">
-        <button @click.stop="endPlay()">返回</button>
-        <button>设置</button>
-        <div class="z-index">
+      <div class="dingwei" v-show="show">
+        <button @click="set()">设置</button>
+        <div v-show="show_2">
           <label for="loop">
             循环播放<input id="loop" class="switch-component" type="checkbox" v-model="loop">
           </label>
           <label for="mirror">
-            镜像<input id="mirror" class="switch-component" type="checkbox" v-model="mirror" @click="mirrorImage(mirror)">
+            镜像<input id="mirror" class="switch-component" type="checkbox" v-model="mirror">
           </label>
           <label for="direction">
-            滚动方向<input id="direction" class="switch-component" type="checkbox" v-model="direction" @click="fontDirection(direction)">
+            滚动方向<input id="direction" class="switch-component" type="checkbox" v-model="direction">
           </label>
           <br>
-          速度<input type="range" min="1" max="10" step="1" v-model.number="playSpeed"/>{{playSpeed}}
-          字体大小<input type="range" min="10" max="100" step="1" v-model="size" @change="changeSize(size)"/>{{size}}
-          倒计时<input type="range" min="0" max="10" step="1" v-model="countNum"/>{{countNum}} ！功能没加
+          <label for="speed">
+            速度<input id="speed" type="range" min="1" max="10" step="1" v-model.number="playSpeed"/>{{playSpeed}}
+          </label>
+          <label for="fontsize">
+            字体大小<input id="fontsize" type="range" min="10" max="100" step="1" v-model="size"/>{{size}}
+          </label>
+          <label for="countnbm">
+            倒计时<input id="countnbm" type="range" min="0" max="10" step="1" v-model="countNum"/>{{countNum}}
+          </label>
+          <label for="lineheight" v-show="!direction">
+            字间距<input id="lineheight" type="range" min="1" max="3" step="0.1" v-model="pObj['line-height']"/>{{pObj['line-height']}}
+          </label>
           <br>
           字体颜色
-          <input type="radio" name="fontcolor" value="#ffffff" v-model="pObj.color"> 白色
-          <input type="radio" name="fontcolor" value="#808080" v-model="pObj.color"> 灰色
-          <input type="radio" name="fontcolor" value="#FFA500" v-model="pObj.color"> 橙色
-          <input type="radio" name="fontcolor" value="#FF0000" v-model="pObj.color"> 红色
-          <input type="radio" name="fontcolor" value="#0000FF" v-model="pObj.color"> 蓝色
-          <input type="radio" name="fontcolor" value="#008000" v-model="pObj.color"> 绿色
-          <input type="radio" name="fontcolor" value="#000000" v-model="pObj.color"> 黑色
+          <label for="color_1">
+            <input id="color_1" type="radio" name="fontcolor" value="#ffffff" v-model="pObj.color"> 白色
+          </label>
+          <label for="color_2">
+            <input id="color_2" type="radio" name="fontcolor" value="#808080" v-model="pObj.color"> 灰色
+          </label>
+          <label for="color_3">
+            <input id="color_3" type="radio" name="fontcolor" value="#FFA500" v-model="pObj.color"> 橙色
+          </label>
+          <label for="color_4">
+            <input id="color_4" type="radio" name="fontcolor" value="#FF0000" v-model="pObj.color"> 红色
+          </label>
+          <label for="color_5">
+            <input id="color_5" type="radio" name="fontcolor" value="#0000FF" v-model="pObj.color"> 蓝色
+          </label>
+          <label for="color_6">
+            <input id="color_6" type="radio" name="fontcolor" value="#008000" v-model="pObj.color"> 绿色
+          </label>
+          <label for="color_7">
+            <input id="color_7" type="radio" name="fontcolor" value="#000000" v-model="pObj.color"> 黑色
+          </label>
           <br>
           背景颜色
-          <input type="radio" name="backgroundcolor" value="#ffffff" v-model="divObj.background"> 白色
-          <input type="radio" name="backgroundcolor" value="#000000" v-model="divObj.background"> 黑色
+          <label for="color_8">
+            <input id="color_8" type="radio" name="backgroundcolor" value="#ffffff" v-model="divObj.background"> 白色
+          </label>
+          <label for="color_9">
+            <input id="color_9" type="radio" name="backgroundcolor" value="#000000" v-model="divObj.background"> 黑色
+          </label>
+          <div>
+            <textarea :style="textareaObj" v-model="text"></textarea>
+          </div>
         </div>
       </div>
-      <div @click="playSwichover($event)">
+      <div :style="divObj" ref="tici" @click="playSwichover()">
         <p :style="pObj">
           {{text}}
         </p>
@@ -63,14 +79,14 @@ export default {
   },
   data() {
     return {
+      show:true,
+      show_2:true,
       //滚动方向
       direction:false,
       //倒计时
       countNum:0,
       //播放状态
       playState:false,
-      //提词器模式，目前好像没用
-      show:false,
       //镜像状态
       mirror:false,
       //循环状态
@@ -84,18 +100,16 @@ export default {
       pObj:{
         fontSize: '40px',
 				color:'#ffffff',
-        //'white-space': 'nowrap',
         transform: 'rotateY(0deg)',
-        padding:'200px 0',
-        'white-space':'normal',
+        padding:'100vh 0',
+        'white-space':'pre-wrap',
+        'line-height': 1
       },
       divObj:{
         overflow:'auto',
-        width:'100%',
-        height:'0',
+        width:'100vw',
+        height:'100vh',
         background:'#000000',
-        // padding:'425px 0 425px 0',
-        
       },
       textareaObj:{
         width:'50%',
@@ -109,21 +123,49 @@ export default {
       
     })
   },
-  watch: {},
+  watch: {
+    //滚动方向
+    direction:{
+      handler(newValue){
+        if(newValue == true){
+          //console.log('向左播放')
+          this.pObj.padding = '45vh 100vw 0 100vw'
+          this.pObj['white-space'] = 'pre'
+          //  !!!因为样式采用了 box-sizing: border-box;所以要设置300vw才会有留白
+          this.pObj.width = '300vw'
+
+        }else{
+          //console.log('向上播放')
+          this.pObj.padding = '100vh 0'
+          this.pObj['white-space'] = 'pre-wrap'
+        }
+      }
+    },
+    //镜像
+    mirror:{
+      handler(newValue){
+        if(newValue == true){
+          //console.log('镜像')
+          this.pObj.transform = 'rotateY(180deg)'
+        }else{
+          //console.log('没镜像')
+          this.pObj.transform = 'rotateY(0deg)'
+        }
+      }
+    },
+    //字体大小
+    size:{
+      handler(newValue){
+        //console.log('字体改变了')
+        this.pObj.fontSize = newValue+'px'
+      }
+    },
+  },
   computed: {},
   mounted() {
     // let a = window.innerHeight/2
     // console.log(a)
     // console.log(window.innerHeight)
- 
-    // console.log(this);
-    // document.addEventListener('fullscreenchange', function(){
-    //   console.log('全屏状态改变了1')
-    //   console.log(show)
-    // })
-    // document.addEventListener('webkitfullscreenchange', function(){console.log('全屏状态改变了2');});
-    // document.addEventListener('mozfullscreenchange', function(){console.log('全屏状态改变了3');});
-    // document.addEventListener('MSFullscreenChange', function(){console.log('全屏状态改变了4');});
   },
   methods: {
     _fetchData() {
@@ -139,60 +181,72 @@ export default {
         that.datas=data
       })
     },
-    //进入提词器模式
-    startPlay(){
-      this.show = true
-      //进入全屏
-      this.$refs.tici.requestFullscreen()
-    },
-    //退出提词器模式
-    endPlay(){
-      this.show = false
-      //console.log(1);
-      if (document.fullscreenElement) {
-       // console.log(2);
-        document.exitFullscreen()
-      }
-    },
     //开始播放
     play(){
       //判断现在播放状态
       //true时，开始播放
-      if(this.playState === true){
-        //设置播放速度
-        this.$refs.tici.scrollTop += this.playSpeed
-        //判断scrollTop位置是否到达底部
-        if(this.$refs.tici.scrollTop < this.$refs.tici.scrollHeight - window.innerHeight){
-          //11毫秒90帧率
-          setTimeout(this.play,11)
-        }else{  
-          //到底底部时，判断是否需要循环
-          if(this.loop === true){
-            //scrollTop位置重新赋值为0
-            this.$refs.tici.scrollTop = 0
-            this.play()
-          }else{
-            //测试用
-            // console.log('准备结束了')
-            //scrollTop位置重新赋值为0
-            this.$refs.tici.scrollTop = 0
-            //改变播放状态
-            this.playState = !this.playState
-            //测试用
-            // console.log('结束了')
-            return
+      if(this.playState == true){
+        //判断播放方向   向上播放
+        if(this.direction == false){
+          //设置播放速度
+          this.$refs.tici.scrollTop += this.playSpeed
+          //判断scrollTop位置是否到达底部
+          if(this.$refs.tici.scrollTop < this.$refs.tici.scrollHeight - window.innerHeight){
+            //11毫秒90帧率
+            setTimeout(this.play,11)
+          }else{  
+            //到底底部时，判断是否需要循环
+            if(this.loop == true){
+              //scrollTop位置重新赋值为0
+              this.$refs.tici.scrollTop = 0
+              this.play()
+            }else{
+              //测试用
+              // console.log('准备结束了')
+              //scrollTop位置重新赋值为0
+              this.$refs.tici.scrollTop = 0
+              //改变播放状态
+              this.playState = !this.playState
+              //测试用
+              // console.log('结束了')
+              return
+            }
           }
-        }
+        }else{   //向左播放
+          //设置播放速度
+          this.$refs.tici.scrollLeft += this.playSpeed
+          //判断scrollLeft位置是否到达底部
+          if(this.$refs.tici.scrollLeft < this.$refs.tici.scrollWidth - window.innerWidth){
+            //11毫秒90帧率
+            setTimeout(this.play,11)
+          }else{  
+            //到底底部时，判断是否需要循环
+            if(this.loop == true){
+              //scrollLeft位置重新赋值为0
+              this.$refs.tici.scrollLeft = 0
+              this.play()
+            }else{
+              //测试用
+              // console.log('准备结束了')
+              //scrollLeft位置重新赋值为0
+              this.$refs.tici.scrollLeft = 0
+              //改变播放状态
+              this.playState = !this.playState
+              //测试用
+              // console.log('结束了')
+              return
+            }
+          }
+        } 
       }else{
         //测试用
         // console.log('暂停了')
       }
     },
-
     //点击文本，切换暂停开始状态
-    playSwichover(event){
-      //改变设置框状态，最后加
-
+    playSwichover(){
+      //改变设置框状态
+      this.show = !this.show
       //改变播放状态
       this.playState = !this.playState
       //调用播放
@@ -201,34 +255,21 @@ export default {
       // console.log('scrollHeight'+this.$refs.tici.scrollHeight)
       // console.log('innerHeight'+window.innerHeight)
     },
-    //字体大小
-    changeSize(size){
-      //测试
-      // console.log(size+'px')
-      this.pObj.fontSize = size+'px'
+    //打开(关闭)设置框
+    set(){
+      this.show_2 = !this.show_2
     },
-    //镜像
-    mirrorImage(mirror){
-      mirror ? this.pObj.transform = 'rotateY(0deg)' : this.pObj.transform = 'rotateY(180deg)'
-    },
-    fontDirection(direction){
-      direction ? this.pObj['white-space'] = 'normal' : this.pObj['white-space'] = 'nowrap'
-    },
-
-    //判断是否进入全屏,进入全屏返回true,否则返回false，暂时没用上
-    isFullScreen(){
-      return !! (document.fullscreen || document.mozFullScreen || document.webkitIsFullScreen || document.webkitFullScreen || document.msFullScreen )
+    noClick(){
+      console.log("请点击其他地方")
     }
   },
 }
 </script>
 
 <style lang="less" scoped>
-/*
 *{
   box-sizing: border-box;
 }
-*/
 
 .switch-component {
   position: relative;
@@ -241,7 +282,6 @@ export default {
   -webkit-appearance: none;
   transition: all .2s ease;
 }
-
 
 /* 按钮 */
 .switch-component::after {
@@ -256,12 +296,10 @@ export default {
   transition: all .2s ease;
 }
 
-
 /* 选中状态时，背景色切换 */
 .switch-component:checked {
   background-color: #86c0fa;
 }
-
 
 /* 选中状态时，按钮的位置移动 */
 .switch-component:checked::after {
@@ -275,7 +313,6 @@ export default {
   background-color: #49b1f5; /* or add it to the track */
 }
 
-
 ::-webkit-scrollbar-thumb {
   background-color: #49b1f5;
   border-radius: 32px;
@@ -287,13 +324,10 @@ export default {
   border-radius: 32px;
 }
 
-
 .dingwei{
   position:fixed;
   top:0;
   z-index: 1;
   background-color: rgb(128, 105, 105);
 }
-
-
 </style>
