@@ -2,6 +2,7 @@
   
   <div class="home_c">
     <div>
+      <!-- 设置框 -->
       <div class="dingwei" v-show="show">
         <button @click="set()">设置</button>
         <div v-show="show_2">
@@ -61,10 +62,20 @@
           <div>
             <textarea :style="textareaObj" v-model="text"></textarea>
           </div>
+          <button @click="chakan">查看</button>
         </div>
       </div>
+      <!-- 进度条 -->
+      <div :style="setDiv"></div>
+      <!-- 倒计时页面 -->
+      <div class="clock" :style="clockDiv">
+        <p>
+          {{countNum}}
+        </p>
+      </div>
+      <!-- 提词器 -->
       <div :style="divObj" ref="tici" @click="playSwichover()">
-        <p :style="pObj">
+        <p :style="pObj" draggable="true">
           {{text}}
         </p>
       </div>
@@ -82,7 +93,12 @@ export default {
   data() {
     return {
       datas:[],
+      clockDiv:{
+        display: 'none'
+      },
+      //设置按钮
       show:true,
+      //设置框
       show_2:true,
       //滚动方向
       direction:false,
@@ -104,19 +120,30 @@ export default {
         fontSize: '40px',
 				color:'#ffffff',
         transform: 'rotateY(0deg)',
-        padding:'50vh 0 100vh 0',
+        margin:'100vh 0 100vh 0',
         'white-space':'pre-wrap',
         'line-height': 1,
+        'user-select': 'none',
       },
       divObj:{
         overflow:'auto',
         width:'100vw',
         height:'100vh',
         background:'#000000',
+        
+      },
+      setDiv:{
+        width: '10px',
+        height: '0',
+        'z-index': 1,
+        'background-color': 'red',
+        position: 'fixed',
+        bottom: 0,
+        right: 0,
       },
       textareaObj:{
-        width:'50%',
-        height:'200px',
+        width: '20vw',
+        height: '20vh',
       }
     }
   },
@@ -132,14 +159,18 @@ export default {
       handler(newValue){
         if(newValue == true){
           //console.log('向左播放')
-          this.pObj.padding = '45vh 100vw 0 100vw'
+          this.pObj.margin = '45vh 100vw 0 100vw'
           this.pObj['white-space'] = 'pre'
           //  !!!因为样式采用了 box-sizing: border-box;所以要设置300vw才会有留白
           // this.pObj.width = '300vw'
+          this.setDiv.width = '0'
+          this.setDiv.height = '10px'
         }else{
           //console.log('向上播放')
-          this.pObj.padding = '100vh 0'
+          this.pObj.margin = '100vh 0 100vh 0'
           this.pObj['white-space'] = 'pre-wrap'
+          this.setDiv.width = '10px'
+          this.setDiv.height = '0'
         }
       }
     },
@@ -189,10 +220,12 @@ export default {
       if(this.playState == true){
         //判断播放方向   向上播放
         if(this.direction == false){
-          //设置播放速度
+          //滚动一次
           this.$refs.tici.scrollTop += this.playSpeed
+          //改变进度条
+          this.setDiv.height = (this.$refs.tici.scrollTop/(this.$refs.tici.scrollHeight - this.$refs.tici.clientHeight))*100 + 'vh'
           //判断scrollTop位置是否到达底部
-          if(this.$refs.tici.scrollTop < this.$refs.tici.scrollHeight - window.innerHeight){
+          if(this.$refs.tici.scrollTop < this.$refs.tici.scrollHeight - this.$refs.tici.clientHeight){
             //11毫秒90帧率
             setTimeout(this.play,11)
           }else{  
@@ -206,18 +239,24 @@ export default {
               // console.log('准备结束了')
               //scrollTop位置重新赋值为0
               this.$refs.tici.scrollTop = 0
+              //进度条清零
+              this.setDiv.height = '0'
               //改变播放状态
               this.playState = !this.playState
+              //改变设置框状态
+              this.show = !this.show
               //测试用
               // console.log('结束了')
               return
             }
           }
         }else{   //向左播放
-          //设置播放速度
+          //滚动一次
           this.$refs.tici.scrollLeft += this.playSpeed
+          //改变进度条
+          this.setDiv.width = (this.$refs.tici.scrollLeft/(this.$refs.tici.scrollWidth - this.$refs.tici.clientWidth))*100 + 'vw'
           //判断scrollLeft位置是否到达底部
-          if(this.$refs.tici.scrollLeft < this.$refs.tici.scrollWidth - window.innerWidth){
+          if(this.$refs.tici.scrollLeft < this.$refs.tici.scrollWidth - this.$refs.tici.clientWidth){
             //11毫秒90帧率
             setTimeout(this.play,11)
           }else{  
@@ -231,8 +270,12 @@ export default {
               // console.log('准备结束了')
               //scrollLeft位置重新赋值为0
               this.$refs.tici.scrollLeft = 0
+              //进度条清零
+              this.setDiv.width = '0'
               //改变播放状态
               this.playState = !this.playState
+              //改变设置框状态
+              this.show = !this.show
               //测试用
               // console.log('结束了')
               return
@@ -255,14 +298,42 @@ export default {
         //调用播放
         this.play()
       }else{
-        setTimeout(this.play,this.countNum*1000)
+        //暂停时不需要倒计时
+        if(this.playState == true){
+          this.playClock()
+          this.play()
+        }else{
+          this.play()
+        }
       }
     },
     //打开(关闭)设置框
     set(){
       this.show_2 = !this.show_2
     },
-    
+    playClock(){
+      //打开倒计时div
+      this.clockDiv.display = 'inline'
+      //保存倒计时
+      let mNum = this.countNum
+      console.log(mNum);
+      //一秒之后countNum-1
+      this.timerID = setInterval(()=>{
+        this.countNum --
+      },1000)
+      //countNum=0,关闭到时间div
+      setTimeout(()=>{
+        clearInterval(this.timerID)
+        this.clockDiv.display = 'none'
+        this.countNum = mNum
+      },mNum*1000)
+    },   
+    chakan(){
+      console.log('scrollHeight是'+this.$refs.tici.scrollHeight)
+      console.log('scrollTop是'+this.$refs.tici.scrollTop)
+      console.log('clientHeight是'+this.$refs.tici.clientHeight)
+      console.log(this.schedule)
+    },
   },
 }
 </script>
@@ -318,13 +389,11 @@ export default {
 
 ::-webkit-scrollbar-thumb {
   background-color: #49b1f5;
-  border-radius: 32px;
 }
 
 /* 滚动条轨道 */
 ::-webkit-scrollbar-track {
   background-color: #dbeffd;
-  border-radius: 32px;
 }
 
 .dingwei{
@@ -332,5 +401,20 @@ export default {
   top:0;
   z-index: 1;
   background-color: rgb(128, 105, 105);
+}
+
+.clock{
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+  background-color: #000;
+}
+
+.clock p{
+  color: #fff;
+  font-size: 200px;
 }
 </style>
