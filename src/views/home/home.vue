@@ -74,7 +74,7 @@
         </p>
       </div>
       <!-- 提词器 -->
-      <div :style="divObj" ref="tici" @click="playSwichover()">
+      <div :style="divObj" ref="tici" @dblclick="this.playSwichover">
         <p :style="pObj" draggable="true">
           {{text}}
         </p>
@@ -115,7 +115,7 @@ export default {
       //播放速度
       playSpeed:1,
       //输入文本
-      text:'输入文稿，马上生成滚屏跑马提词。帮助记者、主持人、vlog拍摄者随时随地开展工作',
+      text:'（双击切换播放暂停！！！）输入文稿，马上生成滚屏跑马提词。帮助记者、主持人、vlog拍摄者随时随地开展工作',
       pObj:{
         fontSize: '40px',
 				color:'#ffffff',
@@ -144,7 +144,12 @@ export default {
       textareaObj:{
         width: '20vw',
         height: '20vh',
-      }
+      },
+      //测试拖动
+      location:{
+        subtractX:0,
+        subtractY:0,
+      },
     }
   },
   created() {
@@ -193,9 +198,29 @@ export default {
         this.pObj.fontSize = newValue+'px'
       }
     },
+    'location.subtractX':{
+      handler(newValue,oldValue){
+        if((newValue - oldValue) > 0){
+          this.$refs.tici.scrollTop += 15
+        }else{
+          this.$refs.tici.scrollTop -= 15
+        }
+      }
+    },
+    'location.subtractY':{
+      handler(newValue,oldValue){
+        if((newValue - oldValue) > 0){
+          this.$refs.tici.scrollLeft += 15
+        }else{
+          this.$refs.tici.scrollLeft -= 15
+        }
+      }
+    },
   },
   computed: {},
   mounted() {
+    window.addEventListener('mousedown',this.ceshi)
+    window.addEventListener('mouseup',this.ceshi3)
   },
   updated(){
   },
@@ -212,6 +237,21 @@ export default {
         let data = JSON.parse(JSON.stringify(res.data.data))
         that.datas=data
       })
+    },
+    //测试拖动效果
+    ceshi(){
+      console.log('这是按下鼠标')
+      window.addEventListener("mousemove", this.ceshi2)
+    },
+    ceshi2(){
+      this.location.subtractX = event.clientX
+      this.location.subtractY = event.clientY
+
+      // console.log('添加移动监听')
+    },
+    ceshi3(){
+      console.log('这是松开鼠标')
+      window.removeEventListener("mousemove", this.ceshi2)
     },
     //开始播放
     play(){
