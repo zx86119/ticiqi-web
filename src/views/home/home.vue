@@ -5,7 +5,7 @@
       <!-- 设置框 -->
       <div class="dingwei" v-show="show">
         <button @click="set()">设置</button>
-        <div v-show="show_2">
+        <div v-show="show_2" @mousedown="this.dragDown" @mouseup="this.dargUp2" >
           <label for="loop">
             循环播放<input id="loop" class="switch-component" type="checkbox" v-model="loop">
           </label>
@@ -62,7 +62,6 @@
           <div>
             <textarea :style="textareaObj" v-model="text"></textarea>
           </div>
-          <button @click="chakan">查看</button>
         </div>
       </div>
       <!-- 进度条 -->
@@ -74,8 +73,8 @@
         </p>
       </div>
       <!-- 提词器 -->
-      <div :style="divObj" ref="tici" @dblclick="this.playSwichover">
-        <p :style="pObj" draggable="true">
+      <div :style="divObj" ref="tici" @mousedown="this.dragDown" @mouseup="this.dargUp">
+        <p :style="pObj">
           {{text}}
         </p>
       </div>
@@ -93,6 +92,7 @@ export default {
   data() {
     return {
       datas:[],
+      //倒计时div
       clockDiv:{
         display: 'none'
       },
@@ -115,7 +115,7 @@ export default {
       //播放速度
       playSpeed:1,
       //输入文本
-      text:'（双击切换播放暂停！！！）输入文稿，马上生成滚屏跑马提词。帮助记者、主持人、vlog拍摄者随时随地开展工作',
+      text:'输入文稿，马上生成滚屏跑马提词。帮助记者、主持人、vlog拍摄者随时随地开展工作',
       pObj:{
         fontSize: '40px',
 				color:'#ffffff',
@@ -145,10 +145,12 @@ export default {
         width: '20vw',
         height: '20vh',
       },
-      //测试拖动
+      //鼠标xy坐标
       location:{
-        subtractX:0,
-        subtractY:0,
+        downX:0,
+        downY:0,
+        upX:0,
+        upY:0,
       },
     }
   },
@@ -198,29 +200,9 @@ export default {
         this.pObj.fontSize = newValue+'px'
       }
     },
-    'location.subtractX':{
-      handler(newValue,oldValue){
-        if((newValue - oldValue) > 0){
-          this.$refs.tici.scrollTop += 15
-        }else{
-          this.$refs.tici.scrollTop -= 15
-        }
-      }
-    },
-    'location.subtractY':{
-      handler(newValue,oldValue){
-        if((newValue - oldValue) > 0){
-          this.$refs.tici.scrollLeft += 15
-        }else{
-          this.$refs.tici.scrollLeft -= 15
-        }
-      }
-    },
   },
   computed: {},
   mounted() {
-    window.addEventListener('mousedown',this.ceshi)
-    window.addEventListener('mouseup',this.ceshi3)
   },
   updated(){
   },
@@ -238,20 +220,40 @@ export default {
         that.datas=data
       })
     },
-    //测试拖动效果
-    ceshi(){
-      console.log('这是按下鼠标')
-      window.addEventListener("mousemove", this.ceshi2)
+    //拖动效果
+    dragDown(){
+      this.location.downX = event.clientX
+      this.location.downY = event.clientY
+      window.addEventListener("mousemove", this.dragMove)
     },
-    ceshi2(){
-      this.location.subtractX = event.clientX
-      this.location.subtractY = event.clientY
-
-      // console.log('添加移动监听')
+    dragMove(){
+      let x = event.movementX
+      let y = event.movementY
+      if(y > 0){
+        this.$refs.tici.scrollTop -= Math.abs(y)
+      }else{
+        this.$refs.tici.scrollTop += Math.abs(y)
+      }
+      if(x > 0){
+        this.$refs.tici.scrollLeft -= Math.abs(x)
+      }else{
+        this.$refs.tici.scrollLeft += Math.abs(x)
+      }
+      this.setDiv.height = (this.$refs.tici.scrollTop/(this.$refs.tici.scrollHeight - this.$refs.tici.clientHeight))*100 + 'vh'
+      this.setDiv.width = (this.$refs.tici.scrollLeft/(this.$refs.tici.scrollWidth - this.$refs.tici.clientWidth))*100 + 'vw'
     },
-    ceshi3(){
-      console.log('这是松开鼠标')
-      window.removeEventListener("mousemove", this.ceshi2)
+    dargUp(){
+      this.location.upX = event.clientX
+      this.location.upY = event.clientY
+      if((this.location.upX - this.location.downX == 0) && (this.location.upY - this.location.downY == 0)){
+        this.playSwichover()
+      }
+      window.removeEventListener("mousemove", this.dragMove)
+    },
+    dargUp2(){
+      this.location.upX = event.clientX
+      this.location.upY = event.clientY
+      window.removeEventListener("mousemove", this.dragMove)
     },
     //开始播放
     play(){
@@ -351,6 +353,7 @@ export default {
     set(){
       this.show_2 = !this.show_2
     },
+    //倒计时效果
     playClock(){
       //打开倒计时div
       this.clockDiv.display = 'inline'
@@ -368,12 +371,6 @@ export default {
         this.countNum = mNum
       },mNum*1000)
     },   
-    chakan(){
-      console.log('scrollHeight是'+this.$refs.tici.scrollHeight)
-      console.log('scrollTop是'+this.$refs.tici.scrollTop)
-      console.log('clientHeight是'+this.$refs.tici.clientHeight)
-      console.log(this.schedule)
-    },
   },
 }
 </script>
@@ -381,80 +378,72 @@ export default {
 <style lang="less" scoped>
 @import 'home';
 
-*{
-  box-sizing: border-box;
-}
+// *{
+//   box-sizing: border-box;
+// }
 
-.switch-component {
-  position: relative;
-  width: 60px;
-  height: 30px;
-  background-color: #dadada;
-  border-radius: 30px;
-  border: none;
-  outline: none;
-  -webkit-appearance: none;
-  transition: all .2s ease;
-}
+// .switch-component {
+//   position: relative;
+//   width: 60px;
+//   height: 30px;
+//   background-color: #dadada;
+//   border-radius: 30px;
+//   border: none;
+//   outline: none;
+//   -webkit-appearance: none;
+//   transition: all .2s ease;
+// }
 
-/* 按钮 */
-.switch-component::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 50%;
-  height: 100%;
-  background-color: #fff;
-  border-radius: 50%;
-  transition: all .2s ease;
-}
+// /* 按钮 */
+// .switch-component::after {
+//   content: '';
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   width: 50%;
+//   height: 100%;
+//   background-color: #fff;
+//   border-radius: 50%;
+//   transition: all .2s ease;
+// }
 
-/* 选中状态时，背景色切换 */
-.switch-component:checked {
-  background-color: #86c0fa;
-}
+// /* 选中状态时，背景色切换 */
+// .switch-component:checked {
+//   background-color: #86c0fa;
+// }
 
-/* 选中状态时，按钮的位置移动 */
-.switch-component:checked::after {
-  left: 50%;
-}
+// /* 选中状态时，按钮的位置移动 */
+// .switch-component:checked::after {
+//   left: 50%;
+// }
 
-//滚动条样式
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-  background-color: #49b1f5; /* or add it to the track */
-}
+// //滚动条样式
+// ::-webkit-scrollbar {
+//   width: 10px;
+//   height: 10px;
+//   background-color: transparent; /* or add it to the track */
+// }
 
-::-webkit-scrollbar-thumb {
-  background-color: #49b1f5;
-}
+// .dingwei{
+//   position:fixed;
+//   top:0;
+//   z-index: 1;
+//   color: #fff;
+//   user-select: none;
+// }
 
-/* 滚动条轨道 */
-::-webkit-scrollbar-track {
-  background-color: #dbeffd;
-}
+// .clock{
+//   width: 100vw;
+//   height: 100vh;
+//   position: fixed;
+//   bottom: 0;
+//   right: 0;
+//   z-index: 2;
+//   background-color: #000;
+// }
 
-.dingwei{
-  position:fixed;
-  top:0;
-  z-index: 1;
-  background-color: rgb(128, 105, 105);
-}
-
-.clock{
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  z-index: 2;
-  background-color: #000;
-}
-
-.clock p{
-  color: #fff;
-  font-size: 200px;
-}
+// .clock p{
+//   color: #fff;
+//   font-size: 200px;
+// }
 </style>
