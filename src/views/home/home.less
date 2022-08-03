@@ -14,8 +14,8 @@
 
 .switch-component {
   position: relative;
-  width: 60px;
-  height: 30px;
+  width: 30px;
+  height: 15px;
   background-color: #dadada;
   border-radius: 30px;
   border: none;
@@ -39,7 +39,7 @@
 
 /* 选中状态时，背景色切换 */
 .switch-component:checked {
-  background-color: #86c0fa;
+  background-color: #2a6cf0;
 }
 
 /* 选中状态时，按钮的位置移动 */
@@ -58,7 +58,7 @@
   position:fixed;
   top:0;
   z-index: 1;
-  color: #fff;
+  color: rgb(3, 224, 253);
   user-select: none;
 }
 
@@ -75,4 +75,93 @@
 .clock p{
   color: #fff;
   font-size: 200px;
+}
+
+#tici p{
+  user-select: none;
+  display: inline-block;
+}
+
+#tici{
+  overflow: auto;
+}
+
+#progress{
+  z-index: 1;
+  background-color: red;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+textarea{
+  width: 400px;
+  height: 20vh;
+  border:0;
+  border-radius:5px;
+  background-color:#fffcfcec;
+}
+
+textarea:hover{
+  border: solid 2px rgb(109, 186, 238,0.7);
+}
+
+input[type=range] {
+  width: 90px;
+  height: 10px;
+}
+
+/* 超小型设备（600px及以下的手机） */
+@media only screen and (max-width: 600px) {
+  textarea{
+    width: 150px;
+    height: 20vh;
+  }
+}
+
+/* 小型设备（平板电脑竖屏模式和大屏手机，600 像素及以上） */
+@media only screen and (min-width: 600px) {
+  textarea{
+    width: 250px;
+    height: 20vh;
+  }
+}
+
+/* 中型设备（平板电脑横屏模式，768 像素及以上） */
+@media only screen and (min-width: 768px) {
+  textarea{
+    width: 300px;
+    height: 20vh;
+  }
+} 
+
+/* 大型设备（笔电、台式机，992 像素及以上） */
+@media only screen and (min-width: 992px) {
+  textarea{
+    width: 400px;
+    height: 20vh;
+  }
+} 
+
+/* 超大型设备（大屏笔电、台式机，1200 像素及以上） */
+@media only screen and (min-width: 1200px) {
+  textarea{
+    width: 400px;
+    height: 20vh;
+  }
+}
+
+
+
+
+
+
+//横屏样式
+@media only screen and (orientation: landscape) {
+  
+}
+
+//竖屏样式
+@media only screen and (orientation: portrait) {
+  
 }

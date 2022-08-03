@@ -5,7 +5,7 @@
       <!-- 设置框 -->
       <div class="dingwei" v-show="show">
         <button @click="set()">设置</button>
-        <div v-show="show_2" @mousedown="this.dragDown" @mouseup="this.dargUp2" >
+        <div v-show="show_2" @mousedown="this.dragDown" @mouseup="this.dragUp2" >
           <label for="loop">
             循环播放<input id="loop" class="switch-component" type="checkbox" v-model="loop">
           </label>
@@ -17,16 +17,16 @@
           </label>
           <br>
           <label for="speed">
-            速度<input id="speed" type="range" min="1" max="10" step="1" v-model.number="playSpeed"/>{{playSpeed}}
+            速度<input class="range" id="speed" type="range" min="1" max="10" step="1" v-model.number="playSpeed"/>{{playSpeed}}
           </label>
           <label for="fontsize">
-            字体大小<input id="fontsize" type="range" min="10" max="100" step="1" v-model="size"/>{{size}}
+            字体大小<input class="range" id="fontsize" type="range" min="10" max="100" step="1" v-model="size"/>{{size}}
           </label>
           <label for="countnbm">
-            倒计时<input id="countnbm" type="range" min="0" max="10" step="1" v-model="countNum"/>{{countNum}}
+            倒计时<input class="range" id="countnbm" type="range" min="0" max="10" step="1" v-model="countNum"/>{{countNum}}
           </label>
           <label for="lineheight" v-show="!direction">
-            字间距<input id="lineheight" type="range" min="1" max="3" step="0.1" v-model="pObj['line-height']"/>{{pObj['line-height']}}
+            字间距<input class="range" id="lineheight" type="range" min="1" max="3" step="0.1" v-model="pObj['line-height']"/>{{pObj['line-height']}}
           </label>
           <br>
           字体颜色
@@ -60,12 +60,12 @@
             <input id="color_9" type="radio" name="backgroundcolor" value="#000000" v-model="divObj.background"> 黑色
           </label>
           <div>
-            <textarea :style="textareaObj" v-model="text"></textarea>
+            <textarea v-model="text"></textarea>
           </div>
         </div>
       </div>
       <!-- 进度条 -->
-      <div :style="setDiv"></div>
+      <div id="progress" :style="setDiv"></div>
       <!-- 倒计时页面 -->
       <div class="clock" :style="clockDiv">
         <p>
@@ -73,7 +73,7 @@
         </p>
       </div>
       <!-- 提词器 -->
-      <div :style="divObj" ref="tici" @mousedown="this.dragDown" @mouseup="this.dargUp">
+      <div id="tici" :style="divObj" ref="tici" @mousedown="this.dragDown" @mouseup="this.dragUp" @touchmove="this.touchMove">
         <p :style="pObj">
           {{text}}
         </p>
@@ -118,32 +118,22 @@ export default {
       text:'输入文稿，马上生成滚屏跑马提词。帮助记者、主持人、vlog拍摄者随时随地开展工作',
       pObj:{
         fontSize: '40px',
-				color:'#ffffff',
+				color: '#ffffff',
+        width: 'auto',
         transform: 'rotateY(0deg)',
-        margin:'100vh 0 100vh 0',
+        padding: '100vh 0 100vh 0',
         'white-space':'pre-wrap',
         'line-height': 1,
-        'user-select': 'none',
       },
       divObj:{
-        overflow:'auto',
         width:'100vw',
         height:'100vh',
         background:'#000000',
-        
       },
+      //进度条
       setDiv:{
         width: '10px',
         height: '0',
-        'z-index': 1,
-        'background-color': 'red',
-        position: 'fixed',
-        bottom: 0,
-        right: 0,
-      },
-      textareaObj:{
-        width: '20vw',
-        height: '20vh',
       },
       //鼠标xy坐标
       location:{
@@ -166,19 +156,25 @@ export default {
       handler(newValue){
         if(newValue == true){
           //console.log('向左播放')
-          this.pObj.margin = '45vh 100vw 0 100vw'
+          this.pObj.padding = '45vh 100vw 0 100vw'
           this.pObj['white-space'] = 'pre'
-          //  !!!因为样式采用了 box-sizing: border-box;所以要设置300vw才会有留白
-          // this.pObj.width = '300vw'
-          this.setDiv.width = '0'
           this.setDiv.height = '10px'
+          setTimeout(()=>{
+            this.$refs.tici.scrollLeft = this.$refs.tici.clientWidth/2
+            this.setDiv.width = (this.$refs.tici.scrollLeft/(this.$refs.tici.scrollWidth - this.$refs.tici.clientWidth))*100 + 'vw'
+          },100)
         }else{
           //console.log('向上播放')
-          this.pObj.margin = '100vh 0 100vh 0'
+          this.pObj.padding = '100vh 0 100vh 0'
           this.pObj['white-space'] = 'pre-wrap'
           this.setDiv.width = '10px'
-          this.setDiv.height = '0'
+          setTimeout(()=>{
+            this.$refs.tici.scrollTop = this.$refs.tici.clientHeight/2
+            this.setDiv.height = (this.$refs.tici.scrollTop/(this.$refs.tici.scrollHeight - this.$refs.tici.clientHeight))*100 + 'vh'
+          },100)
         }
+
+        
       }
     },
     //镜像
@@ -203,8 +199,9 @@ export default {
   },
   computed: {},
   mounted() {
-  },
-  updated(){
+    //初始化文本在提词器中位置
+    this.$refs.tici.scrollTop = this.$refs.tici.clientHeight/2
+    this.setDiv.height = (this.$refs.tici.scrollTop/(this.$refs.tici.scrollHeight - this.$refs.tici.clientHeight))*100 + 'vh'
   },
   methods: {
     _fetchData() {
@@ -233,6 +230,7 @@ export default {
         this.$refs.tici.scrollTop -= Math.abs(y)
       }else{
         this.$refs.tici.scrollTop += Math.abs(y)
+
       }
       if(x > 0){
         this.$refs.tici.scrollLeft -= Math.abs(x)
@@ -242,7 +240,7 @@ export default {
       this.setDiv.height = (this.$refs.tici.scrollTop/(this.$refs.tici.scrollHeight - this.$refs.tici.clientHeight))*100 + 'vh'
       this.setDiv.width = (this.$refs.tici.scrollLeft/(this.$refs.tici.scrollWidth - this.$refs.tici.clientWidth))*100 + 'vw'
     },
-    dargUp(){
+    dragUp(){
       this.location.upX = event.clientX
       this.location.upY = event.clientY
       if((this.location.upX - this.location.downX == 0) && (this.location.upY - this.location.downY == 0)){
@@ -250,10 +248,14 @@ export default {
       }
       window.removeEventListener("mousemove", this.dragMove)
     },
-    dargUp2(){
+    dragUp2(){
       this.location.upX = event.clientX
       this.location.upY = event.clientY
       window.removeEventListener("mousemove", this.dragMove)
+    },
+    touchMove(){
+      this.setDiv.height = (this.$refs.tici.scrollTop/(this.$refs.tici.scrollHeight - this.$refs.tici.clientHeight))*100 + 'vh'
+      this.setDiv.width = (this.$refs.tici.scrollLeft/(this.$refs.tici.scrollWidth - this.$refs.tici.clientWidth))*100 + 'vw'
     },
     //开始播放
     play(){
@@ -269,7 +271,7 @@ export default {
           //判断scrollTop位置是否到达底部
           if(this.$refs.tici.scrollTop < this.$refs.tici.scrollHeight - this.$refs.tici.clientHeight){
             //11毫秒90帧率
-            setTimeout(this.play,11)
+            setTimeout(this.play,16)
           }else{  
             //到底底部时，判断是否需要循环
             if(this.loop == true){
@@ -300,7 +302,7 @@ export default {
           //判断scrollLeft位置是否到达底部
           if(this.$refs.tici.scrollLeft < this.$refs.tici.scrollWidth - this.$refs.tici.clientWidth){
             //11毫秒90帧率
-            setTimeout(this.play,11)
+            setTimeout(this.play,16)
           }else{  
             //到底底部时，判断是否需要循环
             if(this.loop == true){
@@ -343,7 +345,6 @@ export default {
         //暂停时不需要倒计时
         if(this.playState == true){
           this.playClock()
-          this.play()
         }else{
           this.play()
         }
@@ -369,6 +370,7 @@ export default {
         clearInterval(this.timerID)
         this.clockDiv.display = 'none'
         this.countNum = mNum
+        this.play()
       },mNum*1000)
     },   
   },
