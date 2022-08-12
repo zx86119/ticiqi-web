@@ -2,69 +2,68 @@
   
   <div class="home_c" ref="home_c">
     <div>
+      <!-- 悬浮按钮 -->
+      <div class="set_float" v-show="!show">
+        <img src="./set.png" alt=""  @click="set()">
+        <!-- <button @click="set()">设置</button> -->
+      </div>
       <!-- 设置框 -->
-      <div class="set" :style="setDiv" v-show="show">
-        <button @click="set()">设置</button>
-        <div v-show="show_2" @mousedown="this.dragDown" @mouseup="this.dragUp2" >
-          <label for="loop">
-            循环播放<input id="loop" class="switch-component" type="checkbox" v-model="loop">
-          </label>
-          <label for="mirror">
-            镜像<input id="mirror" class="switch-component" type="checkbox" v-model="mirror">
-          </label>
-          <label for="direction">
-            滚动方向<input id="direction" class="switch-component" type="checkbox" v-model="direction">{{directionText}}
-          </label>
-          <br>
-          <label for="speed">
-            速度<input class="range" id="speed" type="range" min="1" max="10" step="1" v-model.number="playSpeed"/>{{playSpeed}}
-          </label>
-          <label for="fontsize">
-            字体大小<input class="range" id="fontsize" type="range" min="10" max="100" step="1" v-model="size"/>{{size}}
-          </label>
-          <label for="countnbm">
-            倒计时<input class="range" id="countnbm" type="range" min="0" max="10" step="1" v-model="countNum"/>{{countNum}}
-          </label>
-          <label for="lineheight" v-show="!direction">
-            字间距<input class="range" id="lineheight" type="range" min="1" max="3" step="0.1" v-model="pObj['line-height']"/>{{pObj['line-height']}}
-          </label>
-          <br>
-          字体颜色
-          <label for="color_1">
-            <input id="color_1" type="radio" name="fontcolor" value="#ffffff" v-model="pObj.color"> 白色
-          </label>
-          <label for="color_2">
-            <input id="color_2" type="radio" name="fontcolor" value="#808080" v-model="pObj.color"> 灰色
-          </label>
-          <label for="color_3">
-            <input id="color_3" type="radio" name="fontcolor" value="#FFA500" v-model="pObj.color"> 橙色
-          </label>
-          <label for="color_4">
-            <input id="color_4" type="radio" name="fontcolor" value="#FF0000" v-model="pObj.color"> 红色
-          </label>
-          <label for="color_5">
-            <input id="color_5" type="radio" name="fontcolor" value="#0000FF" v-model="pObj.color"> 蓝色
-          </label>
-          <label for="color_6">
-            <input id="color_6" type="radio" name="fontcolor" value="#008000" v-model="pObj.color"> 绿色
-          </label>
-          <label for="color_7">
-            <input id="color_7" type="radio" name="fontcolor" value="#000000" v-model="pObj.color"> 黑色
-          </label>
-          <br>
-          背景颜色
-          <label for="color_8">
-            <input id="color_8" type="radio" name="backgroundcolor" value="#ffffff" v-model="divObj.background"> 白色
-          </label>
-          <label for="color_9">
-            <input id="color_9" type="radio" name="backgroundcolor" value="#000000" v-model="divObj.background"> 黑色
-          </label>
-          <br>
-          <label for="orientation">
-            {{screenText}}<input id="orientation" class="switch-component" type="checkbox" v-model="screen">
-          </label>
-          <div>
-            <textarea v-model="text"></textarea>
+      <div class="set" :style="setDiv" v-show="show"> 
+        <div @mousedown="this.dragDown" @mouseup="this.dragUp2" >
+          <div class="box">
+            <div>
+              <label for="loop">
+                循环播放<input id="loop" class="switch-component" type="checkbox" v-model="loop">
+              </label>
+              <label for="mirror">
+                镜像<input id="mirror" class="switch-component" type="checkbox" v-model="mirror">
+              </label>
+              <label for="direction">
+                滚动方向<input id="direction" class="switch-component" type="checkbox" v-model="direction">{{directionText}}
+              </label>
+            </div>
+            <div>
+              <label for="speed">
+                速度<input class="range" id="speed" type="range" min="1" max="10" step="1" v-model.number="playSpeed"/>{{playSpeed}}
+              </label>
+            </div>
+            <div>
+              <label for="fontsize">
+                字体大小<input class="range" id="fontsize" type="range" min="10" max="100" step="1" v-model="size"/>{{size}}
+              </label>
+            </div>
+            <div>
+              <label for="countnbm">
+                倒计时<input class="range" id="countnbm" type="range" min="0" max="10" step="1" v-model="countNum"/>{{countNum}}
+              </label>
+            </div>
+            <div v-show="!direction">
+              <label for="lineheight">
+                字间距<input class="range" id="lineheight" type="range" min="1" max="3" step="0.1" v-model="pObj['line-height']"/>{{pObj['line-height']}}
+              </label>
+            </div>
+            <div>
+              字体颜色<input class="color_slider" type="range" min="0" max="360" step="1" v-model="fontColor"/>
+            </div>
+            <div>
+              背景颜色<input class="color_slider" type="range" min="0" max="360" step="1" v-model="backgroundColor"/>
+            </div>
+            <div>
+              <label for="orientation">
+                {{screenText}}<input id="orientation" class="switch-component" type="checkbox" v-model="screen">
+              </label>
+            </div>
+            <div>
+              <textarea v-model="text"></textarea>
+            </div>
+          </div>
+          <div id="history" class="box">
+            历史记录
+          </div>
+          <!-- 关闭按钮 -->
+          <div class="box">
+            <img src="./shut.png" alt=""  @click="set()">
+            <!-- <button @click="set()">关闭</button> -->
           </div>
         </div>
       </div>
@@ -99,7 +98,7 @@ export default {
       setDiv:{
         'top': 0,
         transform: 'rotate(0deg)',
-      },
+      },    
       //横竖屏
       screen:false,
       screenText:'横屏',
@@ -107,10 +106,8 @@ export default {
       clockDiv:{
         display: 'none'
       },
-      //设置按钮
-      show:true,
       //设置框
-      show_2:true,
+      show:true,
       //滚动方向
       direction:false,
       directionText:'向上',
@@ -128,6 +125,7 @@ export default {
       playSpeed:1,
       //输入文本
       text:'输入文稿，马上生成滚屏跑马提词。帮助记者、主持人、vlog拍摄者随时随地开展工作',
+      fontColor: 0,
       pObj:{
         fontSize: '40px',
 				color: '#ffffff',
@@ -138,6 +136,7 @@ export default {
         'white-space':'pre-wrap',
         'line-height': 1,
       },
+      backgroundColor: 0,
       divObj:{
         width:'100vw',
         height:'100vh',
@@ -297,6 +296,78 @@ export default {
         this.pObj.fontSize = newValue+'px'
       }
     },
+    fontColor:{
+      handler(newValue){
+        let r,g,b
+        if(newValue >= 0 && newValue <= 60){
+          r = 255
+          g = Math.round(4.25 * newValue)
+          b = 0
+        }else if(newValue > 60 && newValue <= 120){
+          r = Math.round(518.4 - 4.32 * newValue)
+          g = 255
+          b = 0
+        }else if(newValue > 120 && newValue <= 180){
+          r = 0
+          g = 255
+          b = Math.round(4.32 * newValue - 522.72)
+        }else if(newValue > 180 && newValue <= 240){
+          r = 0
+          g = Math.round(1036.8 - 4.32 * newValue)
+          b = 255
+        }else if(newValue > 240 && newValue <= 300){
+          r = Math.round(4.32 * newValue - 1041.12)
+          g = 0
+          b = 255
+        }else if(newValue > 300 && newValue < 360){
+          r = 255
+          g = 0
+          b = Math.round(1576.01 - 4.39 * newValue)
+        }else{
+          r = 255
+          g = 0
+          b = 0
+        }
+        this.pObj.color = 'rgb(' + r + ',' + g + ',' + b + ')'
+        // console.log('r,g,b:' + r,g,b)
+      }
+    },
+    backgroundColor:{
+      handler(newValue){
+        let r,g,b
+        if(newValue >= 0 && newValue <= 60){
+          r = 255
+          g = Math.round(4.25 * newValue)
+          b = 0
+        }else if(newValue > 60 && newValue <= 120){
+          r = Math.round(518.4 - 4.32 * newValue)
+          g = 255
+          b = 0
+        }else if(newValue > 120 && newValue <= 180){
+          r = 0
+          g = 255
+          b = Math.round(4.32 * newValue - 522.72)
+        }else if(newValue > 180 && newValue <= 240){
+          r = 0
+          g = Math.round(1036.8 - 4.32 * newValue)
+          b = 255
+        }else if(newValue > 240 && newValue <= 300){
+          r = Math.round(4.32 * newValue - 1041.12)
+          g = 0
+          b = 255
+        }else if(newValue > 300 && newValue < 360){
+          r = 255
+          g = 0
+          b = Math.round(1576.01 - 4.39 * newValue)
+        }else{
+          r = 255
+          g = 0
+          b = 0
+        }
+        this.divObj.background = 'rgb(' + r + ',' + g + ',' + b + ')'
+      }
+    }
+
   },
   computed: {},
   mounted() {
@@ -521,7 +592,7 @@ export default {
     },
     //打开(关闭)设置框
     set(){
-      this.show_2 = !this.show_2
+      this.show = !this.show
     },
     //倒计时效果
     playClock(){
@@ -549,72 +620,4 @@ export default {
 <style lang="less" scoped>
 @import 'home';
 
-// *{
-//   box-sizing: border-box;
-// }
-
-// .switch-component {
-//   position: relative;
-//   width: 60px;
-//   height: 30px;
-//   background-color: #dadada;
-//   border-radius: 30px;
-//   border: none;
-//   outline: none;
-//   -webkit-appearance: none;
-//   transition: all .2s ease;
-// }
-
-// /* 按钮 */
-// .switch-component::after {
-//   content: '';
-//   position: absolute;
-//   top: 0;
-//   left: 0;
-//   width: 50%;
-//   height: 100%;
-//   background-color: #fff;
-//   border-radius: 50%;
-//   transition: all .2s ease;
-// }
-
-// /* 选中状态时，背景色切换 */
-// .switch-component:checked {
-//   background-color: #86c0fa;
-// }
-
-// /* 选中状态时，按钮的位置移动 */
-// .switch-component:checked::after {
-//   left: 50%;
-// }
-
-// //滚动条样式
-// ::-webkit-scrollbar {
-//   width: 10px;
-//   height: 10px;
-//   background-color: transparent; /* or add it to the track */
-// }
-
-// .dingwei{
-//   position:fixed;
-//   top:0;
-//   z-index: 1;
-//   color: #fff;
-//   user-select: none;
-// }
-
-// .clock{
-//   width: 100vw;
-//   height: 100vh;
-//   position: fixed;
-//   bottom: 0;
-//   right: 0;
-//   z-index: 2;
-//   background-color: #000;
-// }
-
-// .clock p{
-//   color: #fff;
-//   font-size: 200px;
-// }
 </style>

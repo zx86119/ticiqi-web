@@ -9,7 +9,7 @@
 
 <script>
 import { getUuid } from '@/utils/getUuid' // 获取uuid
-import tarbar from '@/components/tarbar/tarbar.vue'
+// import tarbar from '@/components/tarbar/tarbar.vue'
 export default {
   name: 'App',
   components: {

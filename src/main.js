@@ -10,10 +10,12 @@ import '@/common/style/element-reset.less'
 import $cookies from 'vue-cookies'
 import * as echarts from 'echarts'
 
+
 Vue.prototype.$echarts = echarts
 Vue.prototype.$http = http
 Vue.use($cookies)
 Vue.use(Element, { size: 'small', zIndex: 3000, fontSize: '16px' })
+
 
 Vue.config.productionTip = false
 
