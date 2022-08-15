@@ -12,6 +12,7 @@
   box-sizing: border-box;
 }
 
+//按钮样式
 .switch-component {
   position: relative;
   width: 30px;
@@ -94,6 +95,8 @@
   height: 5px;
   background-color: transparent; /* or add it to the track */
 }
+
+//设置按钮样式
 .set_float{
   position:fixed;
   right: 0;
@@ -103,11 +106,26 @@
 //设置框样式
 .set{
   position:fixed;
-  right: 0;
   z-index: 2;
   color: rgb(255, 255, 255);
   user-select: none;
-  background: rgba(150, 150, 150, 0.441);
+  background: rgba(111, 110, 110, 0.337);
+  transform-origin: bottom left;
+}
+
+.box{
+  float: left;
+  margin-right: 10px;
+}
+
+.box div{
+  margin-top: 10px;
+}
+
+.setButton{
+  float: left;
+  position:fixed;
+  right: 0;
 }
 
 // 倒计时样式
@@ -172,20 +190,19 @@ input[type=range] {
   border-radius: 5px;
 }
 
-.box{
-  float: left;
-  margin-right: 10px;
-}
 
-.box div{
-  margin-top: 10px;
-}
 
 /* 超小型设备（600px及以下的手机） */
 @media only screen and (max-width: 600px) {
   textarea{
-    width: 150px;
-    height: 20vh;
+    width: 80vw;
+    height: 100px;
+  }
+  .box div{
+    margin: 0;
+  }
+  .box{
+    width: 80vw;
   }
 }
 
@@ -195,14 +212,16 @@ input[type=range] {
     width: 250px;
     height: 20vh;
   }
+  
 }
 
 /* 中型设备（平板电脑横屏模式，768 像素及以上） */
 @media only screen and (min-width: 768px) {
   textarea{
-    width: 300px;
+    width: 150px;
     height: 20vh;
   }
+  
 } 
 
 /* 大型设备（笔电、台式机，992 像素及以上） */

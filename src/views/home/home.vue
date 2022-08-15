@@ -5,10 +5,9 @@
       <!-- 悬浮按钮 -->
       <div class="set_float" v-show="!show">
         <img src="./set.png" alt=""  @click="set()">
-        <!-- <button @click="set()">设置</button> -->
       </div>
       <!-- 设置框 -->
-      <div class="set" :style="setDiv" v-show="show"> 
+      <div class="set" :style="setDiv" ref="set" v-show="show"> 
         <div @mousedown="this.dragDown" @mouseup="this.dragUp2" >
           <div class="box">
             <div>
@@ -19,7 +18,7 @@
                 镜像<input id="mirror" class="switch-component" type="checkbox" v-model="mirror">
               </label>
               <label for="direction">
-                滚动方向<input id="direction" class="switch-component" type="checkbox" v-model="direction">{{directionText}}
+                方向<input id="direction" class="switch-component" type="checkbox" v-model="direction">{{directionText}}
               </label>
             </div>
             <div>
@@ -43,16 +42,22 @@
               </label>
             </div>
             <div>
-              字体颜色<input class="color_slider" type="range" min="0" max="360" step="1" v-model="fontColor"/>
+              字体颜色
+              <el-color-picker v-model="pObj.color" size="mini" show-alpha></el-color-picker>
+              <input class="color_slider" type="range" min="0" max="360" step="1" v-model="fontColor"/>
             </div>
             <div>
-              背景颜色<input class="color_slider" type="range" min="0" max="360" step="1" v-model="backgroundColor"/>
+              背景颜色
+              <el-color-picker v-model="divObj.background" size="mini" show-alpha></el-color-picker>
+              <input class="color_slider" type="range" min="0" max="360" step="1" v-model="backgroundColor"/>
             </div>
             <div>
               <label for="orientation">
                 {{screenText}}<input id="orientation" class="switch-component" type="checkbox" v-model="screen">
               </label>
             </div>
+          </div>
+          <div class="box">
             <div>
               <textarea v-model="text"></textarea>
             </div>
@@ -61,9 +66,8 @@
             历史记录
           </div>
           <!-- 关闭按钮 -->
-          <div class="box">
+          <div class="setButton">
             <img src="./shut.png" alt=""  @click="set()">
-            <!-- <button @click="set()">关闭</button> -->
           </div>
         </div>
       </div>
@@ -95,9 +99,12 @@ export default {
   data() {
     return {
       datas:[],
+      //设置框
+      show:true,
       setDiv:{
         'top': 0,
         transform: 'rotate(0deg)',
+        width: '100vw'
       },    
       //横竖屏
       screen:false,
@@ -106,8 +113,6 @@ export default {
       clockDiv:{
         display: 'none'
       },
-      //设置框
-      show:true,
       //滚动方向
       direction:false,
       directionText:'向上',
@@ -140,7 +145,7 @@ export default {
       divObj:{
         width:'100vw',
         height:'100vh',
-        background:'#000000',
+        background:'rgba(0, 0, 0, 1)',
       },
       //进度条
       progressDiv:{
@@ -171,6 +176,7 @@ export default {
           this.screenText = '竖屏'
           this.pObj['text-orientation'] = 'sideways'
           this.pObj['writing-mode'] = 'vertical-rl'
+          this.setDiv.width = this.$refs.tici.clientHeight + 'px'
           if(this.direction == true){//向左
             this.pObj.padding = '100vh 0 100vh 45vw'
             this.pObj['white-space'] = 'pre'
@@ -188,11 +194,18 @@ export default {
               this.$refs.tici.scrollLeft = this.$refs.tici.clientWidth/2
               this.progressDiv.width = (this.$refs.tici.scrollLeft/(this.$refs.tici.scrollWidth - this.$refs.tici.clientWidth))*100 + 'vw'
             },100)
-          } 
+          }
+          //改变设置框位置
+          setTimeout(()=>{
+            let a = Math.abs(this.$refs.tici.clientWidth - this.$refs.set.scrollHeight)
+            let b = -this.$refs.set.scrollHeight
+            this.setDiv.transform = 'rotate(90deg) translate(' + b + 'px,' + -a + 'px)'
+          },100)
         }else{//横屏
           this.screenText = '横屏'
           this.pObj['text-orientation'] = 'mixed'
           this.pObj['writing-mode'] = 'horizontal-tb'
+          this.setDiv.width = 100 + 'vw'
           if(this.direction == true){//向左
             this.pObj.padding = '45vh 100vw 0 100vw'
             this.pObj['white-space'] = 'pre'
@@ -209,9 +222,12 @@ export default {
               this.$refs.tici.scrollTop = this.$refs.tici.clientHeight/2
               this.progressDiv.height = (this.$refs.tici.scrollTop/(this.$refs.tici.scrollHeight - this.$refs.tici.clientHeight))*100 + 'vh'
             },100)
-          } 
+          }
+          //改变设置框位置
+          this.setDiv.transform = 'rotate(0deg)' 
         }
-        this.mirror = false
+        //重置镜像
+        this.mirror = false 
       }
     },
     //滚动方向
@@ -364,7 +380,7 @@ export default {
           g = 0
           b = 0
         }
-        this.divObj.background = 'rgb(' + r + ',' + g + ',' + b + ')'
+        this.divObj.background = 'rgb(' + r + ',' + g + ',' + b + ', 0.4 )'
       }
     }
 
@@ -600,7 +616,7 @@ export default {
       this.clockDiv.display = 'inline'
       //保存倒计时
       let mNum = this.countNum
-      console.log(mNum);
+      // console.log(mNum);
       //一秒之后countNum-1
       this.timerID = setInterval(()=>{
         this.countNum --
