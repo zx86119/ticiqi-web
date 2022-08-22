@@ -4,7 +4,8 @@
     <div>
       <!-- 悬浮按钮 -->
       <div class="set_float" v-show="!show">
-        <img src="./set.png" alt=""  @click="set()">
+        <img src="./set.png" alt=""  @click="set()"/>
+        <img src="./set.png" alt=""  @click="test1()"/>
       </div>
       <!-- 设置框 -->
       <div class="set" :style="setDiv" ref="set" v-show="show"> 
@@ -164,7 +165,7 @@ export default {
   created() {
     const _self = this
     _self.$nextTick(() => {
-      
+        _self._fetchData()
     })
   },
   watch: {
@@ -394,7 +395,7 @@ export default {
   methods: {
     _fetchData() {
       var that=this
-      let url = `/cockpit/get_index`
+      let url = `/ticiqi-history`
       this.$http({
         url: url,
         method: 'get',
@@ -404,6 +405,67 @@ export default {
         let data = JSON.parse(JSON.stringify(res.data.data))
         that.datas=data
       })
+    },
+    test1() {
+      var that=this
+      var phone="13628560191"
+      var histories=[
+              "提词记录1",
+              "提词记录2",
+              "提词记录3"
+            ]
+      let url = `/ticiqi-history/find` 
+      this.$http({
+        url: url,
+        method: 'post',
+        data:{
+          query: {
+            phone:phone
+          }
+        },
+        showLoading: true,
+      }).then((res) => {
+        console.log(res)
+        if(res.data.total>=1){//如果有记录就更新
+          url = `/ticiqi-history`
+          that.$http({
+            url: url,
+            method: 'patch',
+            data:{
+                query: {
+                  phone: phone
+                },
+                data: {
+                  histories:histories
+                }
+            },
+            showLoading: true,
+          }).then((res) => {
+            console.log(res)
+            that._fetchData()
+          })
+        }
+        else{//如果没有记录就插入
+          url = `/ticiqi-history`
+          that.$http({
+            url: url,
+            method: 'post',
+            data:{
+                data: [
+                  {
+                    phone:phone,
+                    histories:histories
+                  }
+                ]
+            },
+            showLoading: true,
+          }).then((res) => {
+            console.log(res)
+            that._fetchData()
+          })
+        }
+      })
+      
     },
     //拖动效果
     dragDown(){

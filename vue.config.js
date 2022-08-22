@@ -21,7 +21,7 @@ module.exports = {
     proxy: {
       '/api': {
         // target: 'http://42.193.50.133:10081/io', // 设置你调用的接口域名和端口号 别忘了加http
-        target: 'http://www.utourvlog.com/gztIo/io', // 设置你调用的接口域名和端口号 别忘了加http
+        target: 'https://onelittlestep-gf44s-1300418061.ap-shanghai.service.tcloudbase.com/api/v1.0', // 设置你调用的接口域名和端口号 别忘了加http
         changeOrigin: true, // 如果接口跨域，需要进行这个参数配置
         pathRewrite: {
           '^/api': '',
