@@ -5,7 +5,7 @@
       <!-- 悬浮按钮 -->
       <div class="set_float" v-show="!show">
         <img src="./set.png" alt=""  @click="set()"/>
-        <img src="./set.png" alt=""  @click="test1()"/>
+        <!-- <img src="./set.png" alt=""  @click="test1()"/> -->
       </div>
       <!-- 设置框 -->
       <div class="set" :style="setDiv" ref="set" v-show="show"> 
@@ -60,11 +60,20 @@
           </div>
           <div class="box">
             <div>
-              <textarea v-model="text"></textarea>
+              <textarea v-model="text" id="txt"></textarea>
             </div>
           </div>
-          <div id="history" class="box">
-            历史记录
+          <div class="box"><br>
+        <p>历史记录</p>
+        <!-- <button type="button" @click="test1()">test</button> -->
+        <div id="history" class="box1" style="overflow:scroll;width:auto;border: 0;
+            border-radius: 5px;color:black;
+            background-color: #fffcfcec;">
+        <ul type="disc" id="myul">
+        <li v-for="(item,index) in datas" :key="index">{{item}}</li>
+        </ul>
+          
+        </div>
           </div>
           <!-- 关闭按钮 -->
           <div class="setButton">
@@ -401,31 +410,60 @@ export default {
         method: 'get',
         showLoading: true,
       }).then((res) => {
-        console.log(res)
+        // console.log(res)
         let data = JSON.parse(JSON.stringify(res.data.data))
         that.datas=data
+		// console.log(datas)
+		var datas = data
+		// console.log(datas)
+		
+		// var html = '';
+		for (var i = 0; i < datas.length; i++) {
+			var result = datas[i];
+			// console.log(result.histories)
+			that.datas = result.histories
+			// 	for (var j = 0; j < result.histories.length; j++) {
+			// 		html += "<li>";
+			// 		html += result.histories[j];
+			// 		html += "</li>";
+		
+			// 	}
+			// 	myul.innerHTML = html;
+		}
+		
       })
     },
     test1() {
       var that=this
       var phone="13628560191"
-      var histories=[
-              "提词记录1",
-              "提词记录2",
-              "提词记录3"
-            ]
+	var histories = ["提词记录1","提词记录2","提词记录3"]
+      // var histories=[
+      //         "提词记录1",
+      //         "提词记录2",
+      //         "提词记录3"
+      //       ]
+	// 拿到输入框的值
+	var text = document.getElementById("txt").value
+	// console.log(text)
+	// histories.push(text)
+	// 添加到数组中
+	histories.unshift(text)
+	// console.log(histories)
       let url = `/ticiqi-history/find` 
       this.$http({
         url: url,
         method: 'post',
         data:{
           query: {
-            phone:phone
+            phone:phone,
+			histories:histories
+			
           }
         },
         showLoading: true,
       }).then((res) => {
-        console.log(res)
+        // console.log(res)
+		// console.log(res.data.total)
         if(res.data.total>=1){//如果有记录就更新
           url = `/ticiqi-history`
           that.$http({
@@ -441,7 +479,7 @@ export default {
             },
             showLoading: true,
           }).then((res) => {
-            console.log(res)
+            // console.log(res)
             that._fetchData()
           })
         }
@@ -460,7 +498,7 @@ export default {
             },
             showLoading: true,
           }).then((res) => {
-            console.log(res)
+            // console.log(res)
             that._fetchData()
           })
         }
@@ -655,6 +693,8 @@ export default {
       this.show = !this.show
       //改变播放状态
       this.playState = !this.playState
+	//改变播放状态之后，调用保存的方法
+	this.test1()
       //判断倒计时
       if(this.countNum === 0){
         //调用播放
@@ -697,5 +737,13 @@ export default {
 
 <style lang="less" scoped>
 @import 'home';
+
+.box1 li:hover {
+		border: 2px;
+		letter-spacing: 2px;
+		border-color: lightblue;
+		border-width: 2px;
+		background-color: #cac8c8;
+	}
 
 </style>
