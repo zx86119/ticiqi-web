@@ -413,42 +413,42 @@ export default {
         // console.log(res)
         let data = JSON.parse(JSON.stringify(res.data.data))
         that.datas=data
-		// console.log(datas)
-		var datas = data
-		// console.log(datas)
+        // console.log(datas)
+        var datas = data
+        // console.log(datas)
+        
+        // var html = '';
+        for (var i = 0; i < datas.length; i++) {
+          var result = datas[i];
+          // console.log(result.histories)
+          that.datas = result.histories
+          // 	for (var j = 0; j < result.histories.length; j++) {
+          // 		html += "<li>";
+          // 		html += result.histories[j];
+			    // 		html += "</li>";
 		
-		// var html = '';
-		for (var i = 0; i < datas.length; i++) {
-			var result = datas[i];
-			// console.log(result.histories)
-			that.datas = result.histories
-			// 	for (var j = 0; j < result.histories.length; j++) {
-			// 		html += "<li>";
-			// 		html += result.histories[j];
-			// 		html += "</li>";
-		
-			// 	}
-			// 	myul.innerHTML = html;
-		}
+          // 	}
+          // 	myul.innerHTML = html;
+		    }
 		
       })
     },
     test1() {
       var that=this
       var phone="13628560191"
-	var histories = ["提词记录1","提词记录2","提词记录3"]
+	    var histories = ["提词记录1","提词记录2","提词记录3"]
       // var histories=[
       //         "提词记录1",
       //         "提词记录2",
       //         "提词记录3"
       //       ]
-	// 拿到输入框的值
-	var text = document.getElementById("txt").value
-	// console.log(text)
-	// histories.push(text)
-	// 添加到数组中
-	histories.unshift(text)
-	// console.log(histories)
+      // 拿到输入框的值
+      var text = document.getElementById("txt").value
+      // console.log(text)
+      // histories.push(text)
+      // 添加到数组中
+      histories.unshift(text)
+      // console.log(histories)
       let url = `/ticiqi-history/find` 
       this.$http({
         url: url,
@@ -456,8 +456,7 @@ export default {
         data:{
           query: {
             phone:phone,
-			histories:histories
-			
+			      histories:histories
           }
         },
         showLoading: true,
@@ -503,7 +502,27 @@ export default {
           })
         }
       })
-      
+    },
+    //微信支付测试
+    wxpay(money){
+      this.$http({
+        url: 'https://api.mch.weixin.qq.com/v3/pay/transactions/native',
+        method: 'post',
+        data:{
+          "mchid": "1900006XXX",	//直连商户的商户号，由微信支付生成并下发。
+			  	"out_trade_no": "native12177525012014070332333",	//商户系统内部订单号，只能是数字、大小写字母_-*且在同一个商户号下唯一
+			  	"appid": "wxdace645e0bc2cXXX",	//由微信生成的应用ID，全局唯一。请求基础下单接口时请注意APPID的应用属性，例如公众号场景下，需使用应用属性为公众号的APPID
+			  	"description": "Image形象店-深圳腾大-QQ公仔",	//商品描述
+			  	"notify_url": "https://weixin.qq.com/",	//通知URL必须为直接可访问的URL，不允许携带查询串，要求必须为https地址。格式：URL
+			  	"amount": {	//订单金额信息
+			  		"total": money,	//订单总金额，单位为分。
+			  		"currency": "CNY"	//CNY：人民币，境内商户号仅支持人民币。
+			  	}
+        },
+        showLoading: true,
+      }).then((res) => {
+        //测试
+      })
     },
     //拖动效果
     dragDown(){
